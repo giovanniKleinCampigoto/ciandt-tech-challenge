@@ -1,7 +1,13 @@
+import Navbar from "./Navbar";
+import PokemonGrid from "./PokemonGrid";
+import Searchbar from "./Searchbar";
+
 function App() {
   return (
-    <div>
-      HELLO
+    <div className="container">
+      <Navbar />
+      <Searchbar />
+      <PokemonGrid />
     </div>
   );
 }
