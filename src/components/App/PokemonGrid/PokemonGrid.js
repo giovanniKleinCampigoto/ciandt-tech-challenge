@@ -9,21 +9,15 @@ const GridLayout = styled.div`
   padding: 20px 10px;
 `
 
-const PokemonGrid = () => {
+const PokemonGrid = ({ pokemons }) => {
+
   return (
     <GridLayout>
-      <PokemonCard />
-      <PokemonCard />
-      <PokemonCard />
-      <PokemonCard />
-      <PokemonCard />
-      <PokemonCard />
-      <PokemonCard />
-      <PokemonCard />
-      <PokemonCard />
-      <PokemonCard />
-      <PokemonCard />
-      <PokemonCard />
+      {
+        pokemons.map((pokemon, id) => (
+          <PokemonCard key={id + 1} pokemon = { pokemon } />
+        ))
+      }
     </GridLayout>
   );
 }
