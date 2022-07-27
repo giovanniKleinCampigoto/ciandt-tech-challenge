@@ -14,19 +14,22 @@ import { getPokemonDetails } from 'api';
 
 function App() {
   const [ pokemons, setPokemons ] = useState([]);
+  const [ currentPage, setCurrentPage ] = useState(0);
+  const [ totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
     getAllPokemons();
-  }, []);
+  }, [currentPage]);
 
   const getAllPokemons = async () => {
     try {
-      const pokemonsData = await getPokemons();
+      const pokemonsData = await getPokemons(50, 50 * currentPage);
       const promisesArray = pokemonsData.results.map(async (pokemon) => {
         return await getPokemonDetails(pokemon.url);
       });
       const res = await Promise.all(promisesArray);
       setPokemons(res);
+      setTotalPages(Math.ceil(pokemonsData.count / 50));
 
     } catch (error) {
       console.log(error);
@@ -41,7 +44,12 @@ function App() {
           <Route path="/" element={
             <>
               <Searchbar />
-              <PokemonGrid pokemons={ pokemons }/>
+              <PokemonGrid 
+                pokemons={ pokemons }
+                currentPage={ currentPage }
+                setCurrentPage={ setCurrentPage }
+                totalPages={ totalPages }
+              />
             </>
           }
           />
