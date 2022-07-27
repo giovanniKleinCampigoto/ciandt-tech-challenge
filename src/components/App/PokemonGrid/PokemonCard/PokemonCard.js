@@ -10,13 +10,15 @@ const CardLayout = styled.div`
 `;
 
 const ImageContainer = styled.div`
+  display: flex;
+  justify-content: center;
   padding: 0px;
 `;
 
 const PokemonImage = styled.img`
   height: 150px;
   border-radius: 5px;
-  width: 100%;
+  width: 150px;
 `;
 
 const CardBody = styled.div`
@@ -32,6 +34,10 @@ const BodySection = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+
+  h3 {
+    text-transform: capitalize;
+  }
 `;
 
 const PokemonTypesContainer = styled.div`
@@ -58,24 +64,28 @@ const FavoriteButton = styled.button`
   cursor: pointer;
 `
 
-const PokemonCard = () => {
+const PokemonCard = ({ pokemon }) => {
+
   const blueHeart = "💙";
   const whiteHeart = "🤍";
 
   return (
     <CardLayout>
       <ImageContainer>
-        <PokemonImage />
+        <PokemonImage src={pokemon.sprites.front_default}/>
       </ImageContainer>
       <CardBody>
         <BodySection>
-          <h3>Name</h3>
-          <span># Number</span>
+          <h3>{pokemon.name}</h3>
+          <span>#{pokemon.id}</span>
         </BodySection>
         <BodySection>
           <PokemonTypesContainer>
-            <PokemonType>Type 1</PokemonType>
-            <PokemonType>Type 2</PokemonType>
+            {
+              pokemon.types.map((type) => (
+                <PokemonType>{type.type.name}</PokemonType>
+              ))
+            }
           </PokemonTypesContainer>
           <FavoriteButton>
             <div>
