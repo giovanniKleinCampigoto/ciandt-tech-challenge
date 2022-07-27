@@ -12,6 +12,18 @@ const GlobalStyle = createGlobalStyle`
     background-color: ${ (props) => props.theme.lightBlue };
     font-family: 'Roboto', sans-serif;
   }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  h3 {
+    font-size: 1rem;
+  }
 `;
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
