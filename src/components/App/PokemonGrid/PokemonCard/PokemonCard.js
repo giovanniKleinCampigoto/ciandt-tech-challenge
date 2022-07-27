@@ -82,8 +82,8 @@ const PokemonCard = ({ pokemon }) => {
         <BodySection>
           <PokemonTypesContainer>
             {
-              pokemon.types.map((type) => (
-                <PokemonType>{type.type.name}</PokemonType>
+              pokemon.types.map((type, index) => (
+                <PokemonType key={index}>{type.type.name}</PokemonType>
               ))
             }
           </PokemonTypesContainer>
