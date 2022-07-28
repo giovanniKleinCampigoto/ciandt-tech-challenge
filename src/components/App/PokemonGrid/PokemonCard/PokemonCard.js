@@ -1,12 +1,21 @@
 import React from 'react';
+import { Link } from "react-router-dom";
 import styled from 'styled-components';
 
-const CardLayout = styled.div`
+const CardLayout = styled(Link)`
   background-color: ${ (props => props.theme.seaBlue) };
   border-radius: 5px;
   box-shadow: -7px 7px 5px 0px rgba(0,0,0,0.3);
   display: flex;
   flex-direction: column;
+  cursor: pointer;
+  transition: transform 1s;
+  text-decoration: none;
+  color: ${ (props => props.theme.darkBlue) };
+
+  &:hover {
+    transform: scale(1.1);
+  }
 `;
 
 const ImageContainer = styled.div`
@@ -70,31 +79,31 @@ const PokemonCard = ({ pokemon }) => {
   const whiteHeart = "🤍";
 
   return (
-    <CardLayout>
-      <ImageContainer>
-        <PokemonImage src={pokemon.sprites.front_default}/>
-      </ImageContainer>
-      <CardBody>
-        <BodySection>
-          <h3>{pokemon.name}</h3>
-          <span>#{pokemon.id}</span>
-        </BodySection>
-        <BodySection>
-          <PokemonTypesContainer>
-            {
-              pokemon.types.map((type, index) => (
-                <PokemonType key={index}>{type.type.name}</PokemonType>
-              ))
-            }
-          </PokemonTypesContainer>
-          <FavoriteButton>
-            <div>
-              { whiteHeart }
-            </div>
-          </FavoriteButton>
-        </BodySection>
-      </CardBody>
-    </CardLayout>
+      <CardLayout to={`/${pokemon.id}`}>
+        <ImageContainer>
+          <PokemonImage src={pokemon.sprites.front_default}/>
+        </ImageContainer>
+        <CardBody>
+          <BodySection>
+            <h3>{pokemon.name}</h3>
+            <span>#{pokemon.id}</span>
+          </BodySection>
+          <BodySection>
+            <PokemonTypesContainer>
+              {
+                pokemon.types.map((type, index) => (
+                  <PokemonType key={index}>{type.type.name}</PokemonType>
+                ))
+              }
+            </PokemonTypesContainer>
+            <FavoriteButton>
+              <div>
+                { whiteHeart }
+              </div>
+            </FavoriteButton>
+          </BodySection>
+        </CardBody>
+      </CardLayout>
   );
 }
 

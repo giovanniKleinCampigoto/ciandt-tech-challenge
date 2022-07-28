@@ -53,7 +53,7 @@ function App() {
             </>
           }
           />
-          <Route path="/description" element={<PokemonDetails />}
+          <Route path="/:id" element={<PokemonDetails />}
           />
         </Routes>
         

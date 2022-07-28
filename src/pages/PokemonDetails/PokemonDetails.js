@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import CircularProgress from '@mui/material/CircularProgress';
 import styled from 'styled-components';
+import { getPokemonDetailsByID } from 'api';
+import { useParams } from 'react-router-dom';
 
 const DetailsLayout = styled.div`
   display: flex;
@@ -103,96 +106,129 @@ const PokemonAbility = styled.div`
   justify-content: space-evenly;
 `;
 
+const LoaderContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 
 const PokemonDetails = () => {
+
+  const [pokemonDetails, setPokemonDetails] = useState(null);
+  const { id } = useParams();
+
+  useEffect(() => {
+    fetchPokemonDetails();
+    
+  }, []);
+
+  const fetchPokemonDetails = async () => {
+    try {
+      const data = await getPokemonDetailsByID(id);
+      setPokemonDetails(data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
-    <DetailsLayout>
-      <DetailsHeader>
-        <PokemonImage />
-        <PokemonSummary>
-          <BasicInfo>
-            <h1>Name</h1>
-            <h2>Characteristics:</h2>
-            <PokemonCharacteristics>
-              <PokemonTraits>
-                <h3>Traits:</h3>
-                <div>
-                  <strong>ID:</strong> #Number
-                </div>
-                <div>
-                  <strong>Height:</strong> 7
-                </div>
-                <div>
-                  <strong>Weight:</strong> 69
-                </div>
-              </PokemonTraits>
-              <PokemonLocations>
-                <h3>Locations:</h3>
-                <ul>
-                  <li>Cerulean Town</li>
-                  <li>Palet Town</li>
-                  <li>Other Town</li>
-                </ul>
-              </PokemonLocations>
-            </PokemonCharacteristics>
-            <h2>Types:</h2>
-            <PokemonTypesContainer>
-              <PokemonType>Type 1</PokemonType>
-              <PokemonType>Type 2</PokemonType>
-            </PokemonTypesContainer>
-          </BasicInfo>
-          <BattleInfo>
-            <h2>Stats:</h2>
-            <PokemonStats>
-              <PokemonStat>
-                <h3>Stat:</h3>
-                <span>Value</span>
-              </PokemonStat>
-              <PokemonStat>
-                <h3>Stat:</h3>
-                <span>Value</span>
-              </PokemonStat>
-              <PokemonStat>
-                <h3>Stat:</h3>
-                <span>Value</span>
-              </PokemonStat>
-              <PokemonStat>
-                <h3>Stat:</h3>
-                <span>Value</span>
-              </PokemonStat>
-              <PokemonStat>
-                <h3>Stat:</h3>
-                <span>Value</span>
-              </PokemonStat>
-              <PokemonStat>
-                <h3>Stat:</h3>
-                <span>Value</span>
-              </PokemonStat>
-            </PokemonStats>
-            <h2>Abilities:</h2>
-            <PokemonAbilities>
-              <PokemonAbility>
-                <h3>Ability:</h3>
-                <p>Strengthens grass moves to inflict 1.5× damage at 1/3 max HP or less.</p>
-              </PokemonAbility>
-              <PokemonAbility>
-                <h3>Ability:</h3>
-                <p>Strengthens grass moves to inflict 1.5× damage at 1/3 max HP or less.</p>
-              </PokemonAbility>
-              <PokemonAbility>
-                <h3>Ability:</h3>
-                <p>Strengthens grass moves to inflict 1.5× damage at 1/3 max HP or less.</p>
-              </PokemonAbility>
-              <PokemonAbility>
-                <h3>Ability:</h3>
-                <p>Strengthens grass moves to inflict 1.5× damage at 1/3 max HP or less.</p>
-              </PokemonAbility>
-            </PokemonAbilities>
-          </BattleInfo>
-        </PokemonSummary>
-        
-      </DetailsHeader>
-    </DetailsLayout>
+    <>
+      {
+        pokemonDetails ? (
+          <DetailsLayout>
+            <DetailsHeader>
+              <PokemonImage />
+              <PokemonSummary>
+                <BasicInfo>
+                  <h1>{ pokemonDetails.name[0].toUpperCase() + pokemonDetails.name.substring(1) }</h1>
+                  <h2>Characteristics:</h2>
+                  <PokemonCharacteristics>
+                    <PokemonTraits>
+                      <h3>Traits:</h3>
+                      <div>
+                        <strong>ID:</strong> { pokemonDetails.id }
+                      </div>
+                      <div>
+                        <strong>Height:</strong> { pokemonDetails.height }
+                      </div>
+                      <div>
+                        <strong>Weight:</strong> { pokemonDetails.weight }
+                      </div>
+                    </PokemonTraits>
+                    <PokemonLocations>
+                      <h3>Locations:</h3>
+                      <ul>
+                        <li>Cerulean Town</li>
+                        <li>Palet Town</li>
+                        <li>Other Town</li>
+                      </ul>
+                    </PokemonLocations>
+                  </PokemonCharacteristics>
+                  <h2>Types:</h2>
+                  <PokemonTypesContainer>
+                    <PokemonType>Type 1</PokemonType>
+                    <PokemonType>Type 2</PokemonType>
+                  </PokemonTypesContainer>
+                </BasicInfo>
+                <BattleInfo>
+                  <h2>Stats:</h2>
+                  <PokemonStats>
+                    <PokemonStat>
+                      <h3>Stat:</h3>
+                      <span>Value</span>
+                    </PokemonStat>
+                    <PokemonStat>
+                      <h3>Stat:</h3>
+                      <span>Value</span>
+                    </PokemonStat>
+                    <PokemonStat>
+                      <h3>Stat:</h3>
+                      <span>Value</span>
+                    </PokemonStat>
+                    <PokemonStat>
+                      <h3>Stat:</h3>
+                      <span>Value</span>
+                    </PokemonStat>
+                    <PokemonStat>
+                      <h3>Stat:</h3>
+                      <span>Value</span>
+                    </PokemonStat>
+                    <PokemonStat>
+                      <h3>Stat:</h3>
+                      <span>Value</span>
+                    </PokemonStat>
+                  </PokemonStats>
+                  <h2>Abilities:</h2>
+                  <PokemonAbilities>
+                    <PokemonAbility>
+                      <h3>Ability:</h3>
+                      <p>Strengthens grass moves to inflict 1.5× damage at 1/3 max HP or less.</p>
+                    </PokemonAbility>
+                    <PokemonAbility>
+                      <h3>Ability:</h3>
+                      <p>Strengthens grass moves to inflict 1.5× damage at 1/3 max HP or less.</p>
+                    </PokemonAbility>
+                    <PokemonAbility>
+                      <h3>Ability:</h3>
+                      <p>Strengthens grass moves to inflict 1.5× damage at 1/3 max HP or less.</p>
+                    </PokemonAbility>
+                    <PokemonAbility>
+                      <h3>Ability:</h3>
+                      <p>Strengthens grass moves to inflict 1.5× damage at 1/3 max HP or less.</p>
+                    </PokemonAbility>
+                  </PokemonAbilities>
+                </BattleInfo>
+              </PokemonSummary> 
+            </DetailsHeader>
+          </DetailsLayout>
+        ) : (
+          <LoaderContainer>
+            <CircularProgress />
+          </LoaderContainer>
+        )
+      }
+    </>
   );
 }
 
