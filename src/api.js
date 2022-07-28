@@ -44,25 +44,3 @@ export const getPokemonDetailsByID = async (id) => {
     console.log(error);
   }
 }
-
-export const getPokemonLocations = async (endpoint) => {
-  try {
-    const res = await fetch(endpoint);
-    const data = await res.json();
-
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-export const getPokemonAbilities = async (endpoint) => {
-  try {
-    const res = await fetch(endpoint);
-    const data = await res.json();
-
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
-}

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 import styled from 'styled-components';
-import { getPokemonDetailsByID } from 'api';
-import { useParams } from 'react-router-dom';
+import { getPokemonDetailsByID, getPokemonDetails } from 'api';
+import { useNavigate, useParams } from 'react-router-dom';
+import capitalize from 'helpers/utils/capitalize';
 
 const DetailsLayout = styled.div`
   display: flex;
@@ -90,7 +91,11 @@ const  PokemonStat = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: flex-start;
+
+  h3 {
+    margin-right: 10px;
+  }
 `
 
 const PokemonAbilities = styled.div`
@@ -104,6 +109,10 @@ const PokemonAbility = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
+  background-color: ${(props) => props.theme.white};
+  margin: 5px;
+  padding: 5px;
+  border-radius: 25px;
 `;
 
 const LoaderContainer = styled.div`
@@ -112,116 +121,124 @@ const LoaderContainer = styled.div`
   justify-content: center;
 `;
 
+const BackButton = styled.button`
+  width: 50px;
+  height: 50px;
+  margin: 10px;
+  background-color: ${(props) => props.theme.darkBlue};
+  color: ${(props) => props.theme.white};
+  border: none;
+  border-radius: 100px;
+  cursor: pointer;
+`
+
 
 const PokemonDetails = () => {
 
   const [pokemonDetails, setPokemonDetails] = useState(null);
   const { id } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchPokemonDetails();
-    
   }, []);
 
   const fetchPokemonDetails = async () => {
     try {
       const data = await getPokemonDetailsByID(id);
-      setPokemonDetails(data);
+      const locations = await getPokemonDetails(data.location_area_encounters);
+      const abilitiesPromises = data.abilities.map(async (ability) => {
+        return await getPokemonDetails(ability.ability.url);
+      });
+      const pokemonAbilities = await Promise.all(abilitiesPromises);
+      const pokemonAbilitiesData = pokemonAbilities.map((ability) => {
+        return {
+          name: ability.name,
+          description: ability.flavor_text_entries
+            .filter((entry) => entry.language.name === "en")[0].flavor_text
+        }
+      });
+      setPokemonDetails({...data, locations, pokemonAbilitiesData});
     } catch (error) {
       console.log(error);
     }
   }
-
   return (
     <>
       {
         pokemonDetails ? (
-          <DetailsLayout>
-            <DetailsHeader>
-              <PokemonImage />
-              <PokemonSummary>
-                <BasicInfo>
-                  <h1>{ pokemonDetails.name[0].toUpperCase() + pokemonDetails.name.substring(1) }</h1>
-                  <h2>Characteristics:</h2>
-                  <PokemonCharacteristics>
-                    <PokemonTraits>
-                      <h3>Traits:</h3>
-                      <div>
-                        <strong>ID:</strong> { pokemonDetails.id }
-                      </div>
-                      <div>
-                        <strong>Height:</strong> { pokemonDetails.height }
-                      </div>
-                      <div>
-                        <strong>Weight:</strong> { pokemonDetails.weight }
-                      </div>
-                    </PokemonTraits>
-                    <PokemonLocations>
-                      <h3>Locations:</h3>
-                      <ul>
-                        <li>Cerulean Town</li>
-                        <li>Palet Town</li>
-                        <li>Other Town</li>
-                      </ul>
-                    </PokemonLocations>
-                  </PokemonCharacteristics>
-                  <h2>Types:</h2>
-                  <PokemonTypesContainer>
-                    <PokemonType>Type 1</PokemonType>
-                    <PokemonType>Type 2</PokemonType>
-                  </PokemonTypesContainer>
-                </BasicInfo>
-                <BattleInfo>
-                  <h2>Stats:</h2>
-                  <PokemonStats>
-                    <PokemonStat>
-                      <h3>Stat:</h3>
-                      <span>Value</span>
-                    </PokemonStat>
-                    <PokemonStat>
-                      <h3>Stat:</h3>
-                      <span>Value</span>
-                    </PokemonStat>
-                    <PokemonStat>
-                      <h3>Stat:</h3>
-                      <span>Value</span>
-                    </PokemonStat>
-                    <PokemonStat>
-                      <h3>Stat:</h3>
-                      <span>Value</span>
-                    </PokemonStat>
-                    <PokemonStat>
-                      <h3>Stat:</h3>
-                      <span>Value</span>
-                    </PokemonStat>
-                    <PokemonStat>
-                      <h3>Stat:</h3>
-                      <span>Value</span>
-                    </PokemonStat>
-                  </PokemonStats>
-                  <h2>Abilities:</h2>
-                  <PokemonAbilities>
-                    <PokemonAbility>
-                      <h3>Ability:</h3>
-                      <p>Strengthens grass moves to inflict 1.5× damage at 1/3 max HP or less.</p>
-                    </PokemonAbility>
-                    <PokemonAbility>
-                      <h3>Ability:</h3>
-                      <p>Strengthens grass moves to inflict 1.5× damage at 1/3 max HP or less.</p>
-                    </PokemonAbility>
-                    <PokemonAbility>
-                      <h3>Ability:</h3>
-                      <p>Strengthens grass moves to inflict 1.5× damage at 1/3 max HP or less.</p>
-                    </PokemonAbility>
-                    <PokemonAbility>
-                      <h3>Ability:</h3>
-                      <p>Strengthens grass moves to inflict 1.5× damage at 1/3 max HP or less.</p>
-                    </PokemonAbility>
-                  </PokemonAbilities>
-                </BattleInfo>
-              </PokemonSummary> 
-            </DetailsHeader>
-          </DetailsLayout>
+          <>
+          <BackButton onClick={() => navigate(-1)}>
+            Go Back
+          </BackButton>
+            <DetailsLayout>
+              <DetailsHeader>
+                <PokemonImage src={ pokemonDetails.sprites.front_default}/>
+                <PokemonSummary>
+                  <BasicInfo>
+                    <h1>{ capitalize(pokemonDetails.name) }</h1>
+                    <h2>Characteristics:</h2>
+                    <PokemonCharacteristics>
+                      <PokemonTraits>
+                        <h3>Traits:</h3>
+                        <div>
+                          <strong>ID:</strong> { pokemonDetails.id }
+                        </div>
+                        <div>
+                          <strong>Height:</strong> { pokemonDetails.height }
+                        </div>
+                        <div>
+                          <strong>Weight:</strong> { pokemonDetails.weight }
+                        </div>
+                      </PokemonTraits>
+                      <PokemonLocations>
+                        <h3>Locations:</h3>
+                        <ul>
+                          {
+                            pokemonDetails.locations.map((location, index) => (
+                              <li key={index}>{capitalize(location.location_area.name)}</li>
+                            ))
+                          }
+                        </ul>
+                      </PokemonLocations>
+                    </PokemonCharacteristics>
+                    <h2>Types:</h2>
+                    <PokemonTypesContainer>
+                      {
+                        pokemonDetails.types.map((type, index) => (
+                          <PokemonType key={index}>{type.type.name}</PokemonType>
+                        ))
+                      }
+                    </PokemonTypesContainer>
+                  </BasicInfo>
+                  <BattleInfo>
+                    <h2>Stats:</h2>
+                    <PokemonStats>
+                      {
+                        pokemonDetails.stats.map((stat, index) => (
+                          <PokemonStat key={index}>
+                            <h3>{`${capitalize(stat.stat.name)}:`}</h3>
+                            <span>{stat.base_stat}</span>
+                          </PokemonStat>
+                        ))
+                      }
+                    </PokemonStats>
+                    <h2>Abilities:</h2>
+                    <PokemonAbilities>
+                      {
+                        pokemonDetails.pokemonAbilitiesData.map((ability, index) => (
+                          <PokemonAbility key={index}>
+                            <h3>{capitalize(ability.name)}</h3>
+                            <p>{ability.description}</p>
+                          </PokemonAbility>
+                        ))
+                      }
+                    </PokemonAbilities>
+                  </BattleInfo>
+                </PokemonSummary> 
+              </DetailsHeader>
+            </DetailsLayout>
+          </>
         ) : (
           <LoaderContainer>
             <CircularProgress />
